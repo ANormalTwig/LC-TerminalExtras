@@ -13,6 +13,8 @@ public class ExtraCommands {
 
 		return "Toggled door.";
 	}
+	[TerminalCommand("Doors", clearText: false), CommandInfo("Toggles the door.")]
+	public string DoorsCommand() { return DoorCommand(); }
 
 	[TerminalCommand("Teleport", clearText: false), CommandInfo("Activate the teleporter.")]
 	public string TeleportCommand() {
@@ -35,49 +37,35 @@ public class ExtraCommands {
 
 		return "Toggled lights";
 	}
-    [TerminalCommand("Doors", clearText: false), CommandInfo("Toggles the door.")]
-    public string DoorsCommand()
-    {
-		return DoorCommand();
-    }
-
-    [TerminalCommand("Light", clearText: false), CommandInfo("Toggle the lights.")]
-	public string LightCommand()
-	{
-		return LightsCommand();
-	}
+	[TerminalCommand("Light", clearText: false), CommandInfo("Toggle the lights.")]
+	public string LightCommand() { return LightsCommand(); }
 
 	[TerminalCommand("Tp", clearText: false), CommandInfo("Activate the teleporter.")]
-	public string TeleportCommandShort()
-	{
+	public string TeleportCommandShort() {
 		return this.TeleportCommand();
-    }
+	}
 
-    [TerminalCommand("Launch", clearText: false), CommandInfo("Pull the lever, Kronk!")]
-    public string LaunchCommand() {
+	[TerminalCommand("Launch", clearText: false), CommandInfo("Pull the lever, Kronk!")]
+	public string LaunchCommand() {
 		const string alreadyTransitMessage = "Unable to comply. The ship is already in transit.";
 		GameObject leverObject = GameObject.Find("StartGameLever");
-        if (leverObject is null) return "!! Can't find StartGameLever !!";
-        StartMatchLever lever = leverObject.GetComponent<StartMatchLever>();
-        if (lever is null) return "!! Can't find StartMatchLever componen !!";
+		if (leverObject is null) return "!! Can't find StartGameLever !!";
+		StartMatchLever lever = leverObject.GetComponent<StartMatchLever>();
+		if (lever is null) return "!! Can't find StartMatchLever componen !!";
 
-        // Doors are enabled (on a moon), ship is either not landed or is leaving
-        if (StartOfRound.Instance.shipDoorsEnabled && !(StartOfRound.Instance.shipHasLanded || StartOfRound.Instance.shipIsLeaving)) { return alreadyTransitMessage; }
+		// Doors are enabled (on a moon), ship is either not landed or is leaving
+		if (StartOfRound.Instance.shipDoorsEnabled && !(StartOfRound.Instance.shipHasLanded || StartOfRound.Instance.shipIsLeaving)) { return alreadyTransitMessage; }
 		// Doors are disabled (in space), ship is in transit to another moon
 		if (!StartOfRound.Instance.shipDoorsEnabled && StartOfRound.Instance.travellingToNewLevel) { return alreadyTransitMessage; }
 
 		bool newState = !lever.leverHasBeenPulled;
-        lever.PullLever();
-        lever.LeverAnimation();
-        if (newState) lever.StartGame(); else lever.EndGame();
-        return "Initiating " + (lever.leverHasBeenPulled ? "landing" : "launch") + " sequence.";
-    }
-
-    [TerminalCommand("Go", clearText: false), CommandInfo("Pull the lever, Kronk!")]
-	public string GoCommand()
-	{
-		return LaunchCommand();
+		lever.PullLever();
+		lever.LeverAnimation();
+		if (newState) lever.StartGame(); else lever.EndGame();
+		return "Initiating " + (lever.leverHasBeenPulled ? "landing" : "launch") + " sequence.";
 	}
-}
 
+	[TerminalCommand("Go", clearText: false), CommandInfo("Pull the lever, Kronk!")]
+	public string GoCommand() { return LaunchCommand(); }
+}
 
